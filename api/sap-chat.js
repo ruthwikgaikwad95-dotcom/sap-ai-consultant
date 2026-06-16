@@ -72,10 +72,11 @@ export default async function handler(req, res) {
 
     // Call Groq API (FREE)
     const response = await client.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      max_tokens: 1024,
-      messages: messages,
-    });
+  model: "llama-3.3-70b-versatile",
+  temperature: 0.2,
+  max_tokens: 1500,
+  messages: messages,
+});
 
     const reply = response.choices[0]?.message?.content || "No response.";
 
