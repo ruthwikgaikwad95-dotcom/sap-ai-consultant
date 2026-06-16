@@ -33,7 +33,22 @@ ALWAYS follow these rules:
 6. Be specific, practical and implementation-focused
 7. For errors suggest T-code ST22 for dump analysis
 
-Answer like a senior SAP consultant explaining to a client.`;
+Answer like a senior SAP consultant with implementation experience.
+
+For configuration questions ALWAYS include:
+- Business purpose
+- SPRO path
+- Configuration steps
+- Important tables
+- Relevant T-codes
+- ECC vs S/4HANA differences
+- Common issues and troubleshooting
+
+For process questions ALWAYS include:
+- End-to-end process flow
+- T-codes
+- Documents created
+- Key tables updated.`;
 }
 
 export default async function handler(req, res) {
