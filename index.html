@@ -2,151 +2,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SAPilot</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAPilot - SAP AI Consultant</title>
 
-    header {
-      background: #0a6ed1;
-      color: white;
-      padding: 16px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
+<style>
 
-    .modules {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      padding: 20px;
-      background: white;
-      border-bottom: 1px solid #ddd;
-    }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
 
-    .module-btn {
-      padding: 10px 18px;
-      border: none;
-      border-radius: 6px;
-      background: #e5e7eb;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.2s;
-    }
+body{
+background:#f4f6f9;
+}
 
-    .module-btn:hover,
-    .module-btn.active {
-      background: #0a6ed1;
-      color: white;
-    }
+header{
+background:#0a6ed1;
+color:white;
+padding:20px;
+text-align:center;
+}
 
-    .chat-container {
-      max-width: 900px;
-      margin: 20px auto;
-      padding: 20px;
-    }
+header h1{
+margin-bottom:5px;
+}
 
-    #response {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      min-height: 250px;
-      border: 1px solid #ddd;
-      white-space: pre-wrap;
-    }
+.modules{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
+padding:15px;
+background:white;
+border-bottom:1px solid #ddd;
+}
 
-    .input-area {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
+.module-btn{
+padding:10px 15px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+background:#e5e7eb;
+font-weight:bold;
+}
 
-    textarea {
-      flex: 1;
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      resize: vertical;
-    }
+.module-btn.active{
+background:#0a6ed1;
+color:white;
+}
 
-    button.send-btn {
-      background: #0a6ed1;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.container{
+max-width:1000px;
+margin:20px auto;
+padding:15px;
+}
 
-    button.send-btn:hover {
-      background: #0854a0;
-    }
-  </style>
+#chat{
+background:white;
+height:500px;
+overflow-y:auto;
+border-radius:10px;
+padding:20px;
+border:1px solid #ddd;
+}
+
+.user{
+background:#dbeafe;
+padding:12px;
+border-radius:8px;
+margin-bottom:10px;
+}
+
+.bot{
+background:#f1f5f9;
+padding:12px;
+border-radius:8px;
+margin-bottom:10px;
+white-space:pre-wrap;
+}
+
+.input-area{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+#question{
+flex:1;
+padding:12px;
+font-size:16px;
+}
+
+.send-btn{
+padding:12px 20px;
+background:#0a6ed1;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.send-btn:hover{
+background:#0854a0;
+}
+
+</style>
 </head>
+
 <body>
 
-  <header>SAPilot</header>
+<header>
+<h1>SAPilot 🚀</h1>
+<p>Your SAP AI Consultant</p>
+</header>
 
-  <div class="modules">
-    <button class="module-btn active">ALL</button>
-    <button class="module-btn">FI</button>
-    <button class="module-btn">CO</button>
-    <button class="module-btn">SD</button>
-    <button class="module-btn">MM</button>
-    <button class="module-btn">PP</button>
-    <button class="module-btn">PM</button>
-    <button class="module-btn">S/4HANA</button>
-  </div>
+<div class="modules">
 
-  <div class="chat-container">
-    <div id="response">
-Ask an SAP question to get started...
-    </div>
+<button class="module-btn active" onclick="setModule(this,'all')">ALL</button>
+<button class="module-btn" onclick="setModule(this,'fi')">FI</button>
+<button class="module-btn" onclick="setModule(this,'co')">CO</button>
+<button class="module-btn" onclick="setModule(this,'sd')">SD</button>
+<button class="module-btn" onclick="setModule(this,'mm')">MM</button>
+<button class="module-btn" onclick="setModule(this,'pp')">PP</button>
+<button class="module-btn" onclick="setModule(this,'pm')">PM</button>
+<button class="module-btn" onclick="setModule(this,'s4')">S/4HANA</button>
 
-    <div class="input-area">
-      <textarea
-        id="question"
-        rows="3"
-        placeholder="Ask an SAP question..."
-      ></textarea>
-      <button class="send-btn" onclick="askSAP()">Send</button>
-    </div>
-  </div>
+</div>
 
-  <script>
-    async function askSAP() {
-      const question = document.getElementById("question").value;
-      const responseBox = document.getElementById("response");
+<div class="container">
 
-      if (!question.trim()) return;
+<div id="chat">
 
-      responseBox.textContent = "Thinking...";
+<div class="bot">
+Welcome to SAPilot.
 
-      try {
-        const res = await fetch("/api/sap-chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ question })
-        });
+Ask any SAP question.
+</div>
 
-        const data = await res.json();
-        responseBox.textContent = data.answer || "No response received.";
-      } catch (error) {
-        responseBox.textContent = "Error: " + error.message;
-      }
-    }
-  </script>
+</div>
+
+<div class="input-area">
+
+<input
+id="question"
+type="text"
+placeholder="Ask SAP question..."
+onkeypress="if(event.key==='Enter') sendMessage()">
+
+<button class="send-btn" onclick="sendMessage()">
+Send
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let currentModule='all';
+
+function setModule(button,module){
+
+currentModule=module;
+
+document.querySelectorAll('.module-btn')
+.forEach(btn=>btn.classList.remove('active'));
+
+button.classList.add('active');
+
+}
+
+async function sendMessage(){
+
+const input=document.getElementById('question');
+const question=input.value.trim();
+
+if(!question) return;
+
+const chat=document.getElementById('chat');
+
+chat.innerHTML +=
+`<div class="user">${question}</div>`;
+
+chat.innerHTML +=
+`<div class="bot" id="loading">Thinking...</div>`;
+
+chat.scrollTop=chat.scrollHeight;
+
+try{
+
+const response=await fetch('/api/sap-chat',{
+
+method:'POST',
+
+headers:{
+'Content-Type':'application/json'
+},
+
+body:JSON.stringify({
+message:question,
+module:currentModule
+})
+
+});
+
+const data=await response.json();
+
+document.getElementById('loading').remove();
+
+chat.innerHTML +=
+`<div class="bot">${data.reply}</div>`;
+
+chat.scrollTop=chat.scrollHeight;
+
+input.value='';
+
+}catch(error){
+
+document.getElementById('loading').innerHTML=
+'Error connecting to SAPilot API';
+
+}
+
+}
+
+</script>
 
 </body>
 </html>
