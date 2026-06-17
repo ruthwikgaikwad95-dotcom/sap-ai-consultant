@@ -1,13 +1,42 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>SAPilot</title>
-</head>
 <body>
 
-<h1>SAPilot is Working 🚀</h1>
+<h1>SAPilot</h1>
 
-<p>If you can see this text, Vercel is serving your website correctly.</p>
+<button onclick="test()">
+Test API
+</button>
+
+<div id="result"></div>
+
+<script>
+
+async function test(){
+
+const response = await fetch('/api/sap-chat',{
+
+method:'POST',
+
+headers:{
+'Content-Type':'application/json'
+},
+
+body:JSON.stringify({
+message:'Hello',
+module:'all'
+})
+
+});
+
+const data = await response.json();
+
+document.getElementById('result').innerHTML =
+data.reply;
+
+}
+
+</script>
 
 </body>
 </html>
