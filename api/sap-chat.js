@@ -126,12 +126,50 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Message is required" });
     }
 
+    ```javascript
+// Temporary Knowledge Base (Version 1)
+
+let knowledgeContext = "";
+
+const lowerMessage = message.toLowerCase();
+
+if (
+  lowerMessage.includes("phase model") ||
+  lowerMessage.includes("phase-based maintenance") ||
+  lowerMessage.includes("pbm")
+) {
+  knowledgeContext = `
+Phase-Based Maintenance (PBM)
+
+Availability:
+- SAP S/4HANA Asset Management
+- Not available in classic ECC PM
+
+Important:
+- Phase-Based Maintenance is different from classical maintenance planning.
+- IP10 is used to schedule maintenance plans.
+- IP10 is NOT used to configure PBM.
+- Do not assume PBM exists in ECC.
+
+Answer conservatively.
+Do not invent SAP tables, SPRO paths or T-codes.
+If uncertain, explicitly state uncertainty.
+`;
+}
+```
+
     // Build messages with history
     const messages = [
-      {
-        role: "system",
-        content: getSystemPrompt(module),
-      },
+      ```javascript
+{
+  role: "system",
+  content:
+    getSystemPrompt(module) +
+    "\n\nKnowledge Context:\n" +
+    knowledgeContext,
+},
+```
+
       ...(Array.isArray(conversationHistory) ? conversationHistory : []),
       {
         role: "user",
