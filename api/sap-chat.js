@@ -1,3 +1,4 @@
+```javascript
 import Groq from "groq-sdk";
 
 const client = new Groq({
@@ -28,15 +29,15 @@ Your answers must be practical, implementation-focused, and suitable for SAP con
 
 GENERAL RULES
 
-* Never give generic AI answers.
-* Prefer SAP standard functionality before custom development.
-* Mention relevant T-codes.
-* Mention relevant SAP tables.
-* Mention configuration paths (SPRO/IMG) where applicable.
-* Differentiate ECC and S/4HANA whenever relevant.
-* Mention SAP best practices.
-* Mention common implementation pitfalls.
-* Mention transport and production considerations when applicable.
+- Never give generic AI answers.
+- Prefer SAP standard functionality before custom development.
+- Mention relevant T-codes.
+- Mention relevant SAP tables.
+- Mention configuration paths (SPRO/IMG) where applicable.
+- Differentiate ECC and S/4HANA whenever relevant.
+- Mention SAP best practices.
+- Mention common implementation pitfalls.
+- Mention transport and production considerations when applicable.
 
 FOR CONFIGURATION QUESTIONS ALWAYS PROVIDE
 
@@ -80,28 +81,27 @@ FOR DEVELOPMENT QUESTIONS ALWAYS PROVIDE
 
 WHEN ANSWERING
 
-* Use clear section headings.
-* Use numbered steps.
-* Use bullet points.
-* Be concise but technically accurate.
-* If information is uncertain, explicitly state assumptions.
-* Answer as if advising a real SAP project team.
+- Use clear section headings.
+- Use numbered steps.
+- Use bullet points.
+- Be concise but technically accurate.
+- If information is uncertain, explicitly state assumptions.
+- Answer as if advising a real SAP project team.
 
 CRITICAL ACCURACY RULES
 
-* Never invent SAP T-codes.
-* Never invent SAP tables.
-* Never invent SAP SPRO paths.
-* Never invent SAP business functions.
-* Never invent SAP Fiori apps.
-* Never invent SAP transactions.
+- Never invent SAP T-codes.
+- Never invent SAP tables.
+- Never invent SAP SPRO paths.
+- Never invent SAP business functions.
+- Never invent SAP Fiori apps.
+- Never invent SAP transactions.
 
 If information cannot be verified from available knowledge, clearly state:
 
 "Unable to verify this SAP-specific information. Please validate against SAP Help Portal or system configuration."
 
 Do not guess.
-
 `;
 }
 
@@ -126,52 +126,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Message is required" });
     }
 
-    ```javascript
-let knowledgeContext = "";
-
-const lowerMessage = message.toLowerCase();
-
-if (
-lowerMessage.includes("phase model") ||
-lowerMessage.includes("phase-based maintenance") ||
-lowerMessage.includes("pbm")
-) {
-knowledgeContext = `
-Phase-Based Maintenance (PBM)
-
-Availability:
-
-* SAP S/4HANA Asset Management
-* Not available in classic ECC PM
-
-Important:
-
-* Phase-Based Maintenance is different from classical maintenance planning.
-* IP10 is used to schedule maintenance plans.
-* IP10 is NOT used to configure PBM.
-* Do not assume PBM exists in ECC.
-
-Answer conservatively.
-Do not invent SAP tables, SPRO paths or T-codes.
-If uncertain, explicitly state uncertainty.
-`;
-}
-
-```
-
-    // Build messages with history
     const messages = [
-      ```javascript
-{
-role: "system",
-content:
-getSystemPrompt(module) +
-"\n\nKnowledge Context:\n" +
-knowledgeContext,
-},
-
-```
-
+      {
+        role: "system",
+        content: getSystemPrompt(module),
+      },
       ...(Array.isArray(conversationHistory) ? conversationHistory : []),
       {
         role: "user",
@@ -179,15 +138,15 @@ knowledgeContext,
       },
     ];
 
-    // Call Groq API (FREE)
     const response = await client.chat.completions.create({
-  model: "llama-3.3-70b-versatile",
-  temperature: 0.2,
-  max_tokens: 1500,
-  messages: messages,
-});
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.2,
+      max_tokens: 1500,
+      messages: messages,
+    });
 
-    const reply = response.choices[0]?.message?.content || "No response.";
+    const reply =
+      response.choices[0]?.message?.content || "No response.";
 
     return res.status(200).json({
       success: true,
@@ -198,9 +157,11 @@ knowledgeContext,
 
   } catch (error) {
     console.error("Error:", error);
+
     return res.status(500).json({
       success: false,
       error: error.message || "Server error",
     });
   }
 }
+```
