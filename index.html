@@ -1,42 +1,153 @@
+```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAPilot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #0a6ed1;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .modules {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      padding: 20px;
+      background: white;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .module-btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      background: #e5e7eb;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .module-btn:hover,
+    .module-btn.active {
+      background: #0a6ed1;
+      color: white;
+    }
+
+    .chat-container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    #response {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 250px;
+      border: 1px solid #ddd;
+      white-space: pre-wrap;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    textarea {
+      flex: 1;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+
+    button.send-btn {
+      background: #0a6ed1;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button.send-btn:hover {
+      background: #0854a0;
+    }
+  </style>
+</head>
 <body>
 
-<h1>SAPilot</h1>
+  <header>SAPilot</header>
 
-<button onclick="test()">
-Test API
-</button>
+  <div class="modules">
+    <button class="module-btn active">ALL</button>
+    <button class="module-btn">FI</button>
+    <button class="module-btn">CO</button>
+    <button class="module-btn">SD</button>
+    <button class="module-btn">MM</button>
+    <button class="module-btn">PP</button>
+    <button class="module-btn">PM</button>
+    <button class="module-btn">S/4HANA</button>
+  </div>
 
-<div id="result"></div>
+  <div class="chat-container">
+    <div id="response">
+Ask an SAP question to get started...
+    </div>
 
-<script>
+    <div class="input-area">
+      <textarea
+        id="question"
+        rows="3"
+        placeholder="Ask an SAP question..."
+      ></textarea>
+      <button class="send-btn" onclick="askSAP()">Send</button>
+    </div>
+  </div>
 
-async function test(){
+  <script>
+    async function askSAP() {
+      const question = document.getElementById("question").value;
+      const responseBox = document.getElementById("response");
 
-const response = await fetch('/api/sap-chat',{
+      if (!question.trim()) return;
 
-method:'POST',
+      responseBox.textContent = "Thinking...";
 
-headers:{
-'Content-Type':'application/json'
-},
+      try {
+        const res = await fetch("/api/sap-chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ question })
+        });
 
-body:JSON.stringify({
-message:'Hello',
-module:'all'
-})
-
-});
-
-const data = await response.json();
-
-document.getElementById('result').innerHTML =
-data.reply;
-
-}
-
-</script>
+        const data = await res.json();
+        responseBox.textContent = data.answer || "No response received.";
+      } catch (error) {
+        responseBox.textContent = "Error: " + error.message;
+      }
+    }
+  </script>
 
 </body>
 </html>
+```
