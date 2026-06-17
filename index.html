@@ -12,22 +12,31 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+font-family:Segoe UI, Arial, sans-serif;
 }
 
 body{
-background:#f4f6f9;
+background:#f3f4f6;
+height:100vh;
+display:flex;
+flex-direction:column;
 }
 
-header{
+.header{
 background:#0a6ed1;
 color:white;
-padding:20px;
+padding:18px;
 text-align:center;
+box-shadow:0 2px 5px rgba(0,0,0,0.15);
 }
 
-header h1{
-margin-bottom:5px;
+.header h1{
+font-size:28px;
+}
+
+.header p{
+margin-top:5px;
+font-size:14px;
 }
 
 .modules{
@@ -41,12 +50,12 @@ border-bottom:1px solid #ddd;
 }
 
 .module-btn{
-padding:10px 15px;
+padding:10px 16px;
 border:none;
-border-radius:6px;
-cursor:pointer;
+border-radius:8px;
 background:#e5e7eb;
-font-weight:bold;
+cursor:pointer;
+font-weight:600;
 }
 
 .module-btn.active{
@@ -55,33 +64,40 @@ color:white;
 }
 
 .container{
-max-width:1000px;
-margin:20px auto;
-padding:15px;
+flex:1;
+max-width:1100px;
+width:100%;
+margin:auto;
+display:flex;
+flex-direction:column;
+padding:20px;
 }
 
-#chat{
+.chat-box{
+flex:1;
 background:white;
-height:500px;
-overflow-y:auto;
-border-radius:10px;
+border-radius:12px;
 padding:20px;
+overflow-y:auto;
 border:1px solid #ddd;
 }
 
 .user{
 background:#dbeafe;
 padding:12px;
-border-radius:8px;
-margin-bottom:10px;
+border-radius:10px;
+margin-bottom:12px;
+max-width:85%;
+margin-left:auto;
 }
 
 .bot{
 background:#f1f5f9;
 padding:12px;
-border-radius:8px;
-margin-bottom:10px;
+border-radius:10px;
+margin-bottom:12px;
 white-space:pre-wrap;
+max-width:85%;
 }
 
 .input-area{
@@ -92,21 +108,31 @@ margin-top:15px;
 
 #question{
 flex:1;
-padding:12px;
+padding:14px;
+border:1px solid #ccc;
+border-radius:10px;
 font-size:16px;
 }
 
 .send-btn{
-padding:12px 20px;
 background:#0a6ed1;
 color:white;
 border:none;
-border-radius:6px;
+padding:14px 24px;
+border-radius:10px;
 cursor:pointer;
+font-weight:bold;
 }
 
 .send-btn:hover{
 background:#0854a0;
+}
+
+.footer{
+text-align:center;
+padding:10px;
+font-size:12px;
+color:#666;
 }
 
 </style>
@@ -114,10 +140,10 @@ background:#0854a0;
 
 <body>
 
-<header>
-<h1>SAPilot by Ruthwik 🚀</h1>
-<p>Your SAP AI Consultant</p>
-</header>
+<div class="header">
+<h1>SAPilot 🚀</h1>
+<p>AI Powered SAP Functional Consultant</p>
+</div>
 
 <div class="modules">
 
@@ -128,18 +154,19 @@ background:#0854a0;
 <button class="module-btn" onclick="setModule(this,'mm')">MM</button>
 <button class="module-btn" onclick="setModule(this,'pp')">PP</button>
 <button class="module-btn" onclick="setModule(this,'pm')">PM</button>
-<button class="module-btn" onclick="setModule(this,'s4')">S/4HANA</button>
+<button class="module-btn" onclick="setModule(this,'ps')">PS</button>
+<button class="module-btn" onclick="setModule(this,'s4')">S/4</button>
 
 </div>
 
 <div class="container">
 
-<div id="chat">
+<div id="chat" class="chat-box">
 
 <div class="bot">
 Welcome to SAPilot.
 
-Ask any SAP question.
+Ask any SAP question related to FI, CO, SD, MM, PP, PM, PS or S/4HANA.
 </div>
 
 </div>
@@ -147,9 +174,9 @@ Ask any SAP question.
 <div class="input-area">
 
 <input
-id="question"
 type="text"
-placeholder="Ask SAP question..."
+id="question"
+placeholder="Ask your SAP question..."
 onkeypress="if(event.key==='Enter') sendMessage()">
 
 <button class="send-btn" onclick="sendMessage()">
@@ -158,6 +185,10 @@ Send
 
 </div>
 
+</div>
+
+<div class="footer">
+SAPilot MVP Version 1
 </div>
 
 <script>
@@ -180,15 +211,23 @@ async function sendMessage(){
 const input=document.getElementById('question');
 const question=input.value.trim();
 
-if(!question) return;
+if(!question){
+return;
+}
 
 const chat=document.getElementById('chat');
 
-chat.innerHTML +=
-`<div class="user">${question}</div>`;
+chat.innerHTML += `
+<div class="user">${question}</div>
+`;
 
-chat.innerHTML +=
-`<div class="bot" id="loading">Thinking...</div>`;
+const loadingId='load'+Date.now();
+
+chat.innerHTML += `
+<div class="bot" id="${loadingId}">
+Thinking...
+</div>
+`;
 
 chat.scrollTop=chat.scrollHeight;
 
@@ -211,10 +250,15 @@ module:currentModule
 
 const data=await response.json();
 
-document.getElementById('loading').remove();
+const loading=document.getElementById(loadingId);
 
-chat.innerHTML +=
-`<div class="bot">${data.reply}</div>`;
+if(loading){
+loading.remove();
+}
+
+chat.innerHTML += `
+<div class="bot">${data.reply || 'No response received.'}</div>
+`;
 
 chat.scrollTop=chat.scrollHeight;
 
@@ -222,8 +266,11 @@ input.value='';
 
 }catch(error){
 
-document.getElementById('loading').innerHTML=
-'Error connecting to SAPilot API';
+const loading=document.getElementById(loadingId);
+
+if(loading){
+loading.innerHTML='Unable to connect to SAPilot API.';
+}
 
 }
 
